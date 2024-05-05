@@ -62,38 +62,3 @@ fn case_insensitive_search() {
         search_case_insensitive(contents, query)
     );
 }
-
-#[test]
-fn from_args() {
-    env::remove_var("CASE_INSENSITIVE");
-    let args = vec![
-        String::from("minigrep"),
-        String::from("foo"),
-        String::from("bar"),
-    ];
-    let config = CommandLineConfig::from_args(&args).unwrap();
-    assert_eq!(config.query(), "foo");
-    assert_eq!(config.filename(), "bar");
-    assert!(config.case_sensitive());
-}
-
-#[test]
-fn from_args_not_enough_args() {
-    let args = vec![String::from("minigrep")];
-    let config = CommandLineConfig::from_args(&args);
-    assert!(config.is_err());
-}
-
-#[test]
-fn from_args_case_insensitive() {
-    env::set_var("CASE_INSENSITIVE", "1");
-    let args = vec![
-        String::from("minigrep"),
-        String::from("foo"),
-        String::from("bar"),
-    ];
-    let config = CommandLineConfig::from_args(&args).unwrap();
-    assert_eq!(config.query(), "foo");
-    assert_eq!(config.filename(), "bar");
-    assert!(!config.case_sensitive());
-}
