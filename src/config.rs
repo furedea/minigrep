@@ -1,4 +1,4 @@
-use std::env;
+use std::env::{self, Args};
 
 pub struct CommandLineConfig {
     query: String,
@@ -7,12 +7,10 @@ pub struct CommandLineConfig {
 }
 
 impl CommandLineConfig {
-    pub fn from_args(args: &[String]) -> Result<CommandLineConfig, &'static str> {
-        if args.len() < 3 {
-            return Err("not enough arguments");
-        }
-        let query = args[1].clone();
-        let filename = args[2].clone();
+    pub fn from_args(mut args: Args) -> Result<CommandLineConfig, &'static str> {
+        args.next();
+        let query = get_arg(&mut args, "Didn't get a query string")?;
+        let filename = get_arg(&mut args, "Didn't get a filename")?;
         let case_sensitive = env::var("CASE_INSENSITIVE").is_err();
 
         Ok(CommandLineConfig {
@@ -32,5 +30,15 @@ impl CommandLineConfig {
 
     pub fn case_sensitive(&self) -> bool {
         self.case_sensitive
+    }
+}
+
+fn get_arg<T: Iterator<Item = String>>(
+    args: &mut T,
+    err_msg: &'static str,
+) -> Result<String, &'static str> {
+    match args.next() {
+        Some(arg) => Ok(arg),
+        None => Err(err_msg),
     }
 }

@@ -11,8 +11,7 @@ pub use config::CommandLineConfig;
 pub use search::{search, search_case_insensitive};
 
 pub fn minigrep() {
-    let args: Vec<String> = env::args().collect();
-    let config = CommandLineConfig::from_args(&args).unwrap_or_else(|err| {
+    let config = CommandLineConfig::from_args(env::args()).unwrap_or_else(|err| {
         eprintln!("Problem parsing arguments: {}", err);
         process::exit(1);
     });
